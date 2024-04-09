@@ -3,7 +3,7 @@ package rotatelogs
 import (
 	"time"
 
-	"github.com/lestrrat-go/file-rotatelogs/internal/option"
+	"github.com/sauryniu/file-rotatelogs/internal/option"
 )
 
 const (
@@ -15,6 +15,7 @@ const (
 	optkeyRotationSize  = "rotation-size"
 	optkeyRotationCount = "rotation-count"
 	optkeyForceNewFile  = "force-new-file"
+	optkeyShowInConsole = "show-in-console"
 )
 
 // WithClock creates a new Option that sets a clock
@@ -86,4 +87,8 @@ func WithHandler(h Handler) Option {
 // rotation is performed
 func ForceNewFile() Option {
 	return option.New(optkeyForceNewFile, true)
+}
+
+func WithConsole() Option {
+	return option.New(optkeyShowInConsole, true)
 }

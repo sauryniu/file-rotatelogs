@@ -14,9 +14,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/lestrrat-go/file-rotatelogs/internal/fileutil"
 	strftime "github.com/lestrrat-go/strftime"
 	"github.com/pkg/errors"
+	"github.com/sauryniu/file-rotatelogs/internal/fileutil"
 )
 
 func (c clockFn) Now() time.Time {
@@ -44,6 +44,7 @@ func New(p string, options ...Option) (*RotateLogs, error) {
 	var maxAge time.Duration
 	var handler Handler
 	var forceNewFile bool
+	var showInConsole bool
 
 	for _, o := range options {
 		switch o.Name() {
@@ -72,6 +73,8 @@ func New(p string, options ...Option) (*RotateLogs, error) {
 			handler = o.Value().(Handler)
 		case optkeyForceNewFile:
 			forceNewFile = true
+		case optkeyShowInConsole:
+			showInConsole = true
 		}
 	}
 
@@ -95,6 +98,7 @@ func New(p string, options ...Option) (*RotateLogs, error) {
 		rotationSize:  rotationSize,
 		rotationCount: rotationCount,
 		forceNewFile:  forceNewFile,
+		showInConsole: showInConsole,
 	}, nil
 }
 
@@ -111,7 +115,9 @@ func (rl *RotateLogs) Write(p []byte) (n int, err error) {
 	if err != nil {
 		return 0, errors.Wrap(err, `failed to acquite target io.Writer`)
 	}
-
+	if rl.showInConsole {
+		_, _ = os.Stdout.Write(p)
+	}
 	return out.Write(p)
 }
 
